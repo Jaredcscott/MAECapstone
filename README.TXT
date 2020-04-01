@@ -30,10 +30,23 @@ To use this tool:
     5. Using the drop down menus, select the week you wish to update in canvas, and the week from the 
        time-tracking sheet that contains the desired information.
     6. Be sure to enter a numeric value for the "Max Score". 
-    7. Click "Run", The original Canvas file provided will be updated with the desired information.
+    7. Click "Run".
     8. If applicable choose yes or no to overwriting data.      
+
+The original Canvas file provided will be updated with the desired information. 
 
 To run the project from the command line, go to the folder and
 type the following:
 
 java -jar "Time_Tracking_Tool.jar" 
+
+
+
+
+
+
+
+
+
+
+Ver 1.0: Jared Scott 
