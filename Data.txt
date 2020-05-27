@@ -1,6 +1,5 @@
 maxValTxt:2
-quesScoreR:5
-maxValR:
+maxValR:5
 percent1:14
 percent2:14
 percent3:14
