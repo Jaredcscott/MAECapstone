@@ -1,0 +1,12 @@
+maxValTxt:5
+maxValR:10
+percent1:16
+percent2:14
+percent3:14
+percent4:14
+percent5:14
+percent6:14
+percent7:14
+percent8:
+percent9:
+percent10:
