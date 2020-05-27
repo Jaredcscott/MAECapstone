@@ -1,0 +1,13 @@
+maxValTxt:2
+quesScoreR:5
+maxValR:
+percent1:14
+percent2:14
+percent3:14
+percent4:14
+percent5:14
+percent6:14
+percent7:14
+percent8:
+percent9:
+percent10:
