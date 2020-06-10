@@ -1,4 +1,4 @@
-maxValTxt:6
+maxValTxt:5
 percent1:16
 percent2:14
 percent3:14
