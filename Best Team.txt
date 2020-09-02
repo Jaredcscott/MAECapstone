@@ -1,0 +1,81 @@
+
+Sum of all preference scores (Lower is better): 53
+                 Preference Score: 4
+Teamname:      L3Harris - Stereo Camera Project
+Min Members: 3     Max Members: 5  |  Members: 3
+Members: 
+     Burton, Chase  |       Preference Score: 1
+     Esterholdt, Dustin  |       Preference Score: 1
+     Greenwood, Sterling  |       Preference Score: 2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 5
+Teamname:      NG - Minuteman Retraction Mechanism
+Min Members: 3     Max Members: 5  |  Members: 5
+Members: 
+     Schultz, Alexander  |       Preference Score: 1
+     Defriez, Matt  |       Preference Score: 1
+     Jensen, Katie  |       Preference Score: 1
+     Mitsvotai, Michael  |       Preference Score: 1
+     Rivers, Wesley  |       Preference Score: 1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 3
+Teamname:      UTAP - Self-Following Wheelchair
+Min Members: 3     Max Members: 5  |  Members: 3
+Members: 
+     Nelson, Alex  |       Preference Score: 1
+     Baird, Kameron  |       Preference Score: 1
+     Sorensen, Alex  |       Preference Score: 1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 7
+Teamname:      Campbell Sci - Solar Tracker Brake and Rotation System
+Min Members: 3     Max Members: 5  |  Members: 5
+Members: 
+     Bagley, Braeden  |       Preference Score: 1
+     Sorensen, Garrett  |       Preference Score: 1
+     Niebergall, Andrew  |       Preference Score: 1
+     Roundy, Spencer  |       Preference Score: 2
+     Winkel, Taylor  |       Preference Score: 2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 13
+Teamname:      WMR - Stainless Recovery
+Min Members: 3     Max Members: 5  |  Members: 3
+Members: 
+     Gilbert, Ryan  |       Preference Score: 4
+     Beckstead, Karrie  |       Preference Score: 4
+     Jeffrey, Blake  |       Preference Score: 5
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 5
+Teamname:      Lincotek - ALIF Implant Inserter
+Min Members: 3     Max Members: 5  |  Members: 4
+Members: 
+     Bauer, Landon  |       Preference Score: 1
+     Battaglia, Bronson  |       Preference Score: 1
+     Johnson, Zander  |       Preference Score: 1
+     Seamons, Eric  |       Preference Score: 2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 11
+Teamname:      WMR - Coins Recovery Trommel
+Min Members: 3     Max Members: 5  |  Members: 3
+Members: 
+     Leo, Jacob  |       Preference Score: 3
+     Davis, Esther  |       Preference Score: 5
+     Sottilare, Ben  |       Preference Score: 3
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                 Preference Score: 5
+Teamname:      eCVT V2
+Min Members: 3     Max Members: 5  |  Members: 5
+Members: 
+     Davis, Devan  |       Preference Score: 1
+     Linton, Drew  |       Preference Score: 1
+     Graham, Justin  |       Preference Score: 1
+     Vollmer, Bridger  |       Preference Score: 1
+     Connors, Casey  |       Preference Score: 1
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
