@@ -92,9 +92,8 @@ To use the Team Sorting Tool:
 14. By running sort a few times a relative minimum score sort can be achieved. 
     
 
-To run the project with debugging information, go to the folder and
-type the following:
+####To run the project with debugging information, go to the folder and type the following:
 
-java -jar "MAE_Grading_Tool.jar" 
+`java -jar "MAE_Grading_Tool.jar"` 
 
-Ver 1.7: Jared Scott
+**Ver 1.7: Jared Scott**
