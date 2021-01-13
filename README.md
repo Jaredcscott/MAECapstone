@@ -1,4 +1,4 @@
-<p>  __  __          ______    _____                _                   
+<pre>  __  __          ______    _____                _                   
  |  \/  |   /\   |  ____|  / ____|              | |      
  | \  / |  /  \  | |__    | |     __ _ _ __  ___| |_ ___  _ __   ___
  | |\/| | / /\ \ |  __|   | |    / _` | '_ \/ __| __/ _ \| '_ \ / _ \
@@ -13,7 +13,7 @@
  | |__| | | | (_| | (_| | | | | | (_| |    | | (_) | (_) | |
   \_____|_|  \__,_|\__,_|_|_| |_|\__, |    |_|\___/ \___/|_|
                                   __/ |
-                                 |___/</p>                       
+                                 |___/</pre>                       
 ##### This tool uses the Java Runtime Environment. In order for it to work properly you will need to have 
 ##### Java installed on your system. 
 
@@ -22,11 +22,11 @@ Windows 10: https://www.java.com/en/download/win10.jsp
 Linux: https://java.com/en/download/help/linux_x64_install.xml
 Mac OS: https://java.com/en/download/faq/java_mac.xml
 
-<p>  _____ _             _____            _   _             _____         _
+<pre>  _____ _             _____            _   _             _____         _
  |_   _(_)_ __  ___  |_   _| _ __ _ __| |_(_)_ _  __ _  |_   _|__  ___| |
    | | | | '  \/ -_)   | || '_/ _` / _| / / | ' \/ _` |   | |/ _ \/ _ \ |
    |_| |_|_|_|_\___|   |_||_| \__,_\__|_\_\_|_||_\__, |   |_|\___/\___/_|
-                                                 |___/</p>
+                                                 |___/</pre>
 To use the Time Tracking Tool:
     1. Run the file called "MAE_Grading_Tool.jar".
     2. If you have not done so already, download your Canvas and Time files. 
@@ -41,10 +41,10 @@ To use the Time Tracking Tool:
 
 The original Canvas file provided will be updated with the desired information. 
 
-<p>  ___         _              ___                      _____         _
+<pre>  ___         _              ___                      _____         _
  | _ \_____ _(_)_____ __ __ / __| __ ___ _ _ ___ ___ |_   _|__  ___| |
  |   / -_) V / / -_) V  V / \__ \/ _/ _ \ '_/ -_|_-<   | |/ _ \/ _ \ |
- |_|_\___|\_/|_\___|\_/\_/  |___/\__\___/_| \___/__/   |_|\___/\___/_|</p>
+ |_|_\___|\_/|_\___|\_/\_/  |___/\__\___/_| \___/__/   |_|\___/\___/_|</pre>
 
 To use the Review Scores Tool:
     1. Run the file called "MAE_Grading_Tool.jar".
@@ -60,11 +60,11 @@ To use the Review Scores Tool:
     
 The original Canvas file provided will be updated with the desired information.
 
-<p>  _____                 ___          _   _             _____         _
+<pre>  _____                 ___          _   _             _____         _
  |_   _|__ __ _ _ __   / __| ___ _ _| |_(_)_ _  __ _  |_   _|__  ___| |
    | |/ -_) _` | '  \  \__ \/ _ \ '_|  _| | ' \/ _` |   | |/ _ \/ _ \ |
    |_|\___\__,_|_|_|_| |___/\___/_|  \__|_|_||_\__, |   |_|\___/\___/_|
-                                               |___/</p>
+                                               |___/</pre>
 To use the Team Sorting Tool:
     1. Run the file called "MAE_Grading_Tool.jar".
     2. If you have not done so already, download your Student Matching Report file. 
