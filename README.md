@@ -14,8 +14,8 @@
   \_____|_|  \__,_|\__,_|_|_| |_|\__, |    |_|\___/ \___/|_|
                                   __/ |                     
                                  |___/                                                     
-This tool uses the Java Runtime Environment. In order for it to work properly you will need to have 
-Java installed on your system. 
+## This tool uses the Java Runtime Environment. In order for it to work properly you will need to have 
+## Java installed on your system. 
 
 Here are links to installation media: 
 Windows 10: https://www.java.com/en/download/win10.jsp
