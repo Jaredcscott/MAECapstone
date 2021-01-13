@@ -14,13 +14,12 @@
   \_____|_|  \__,_|\__,_|_|_| |_|\__, |    |_|\___/ \___/|_|
                                   __/ |
                                  |___/</pre>                       
-#### This tool uses the Java Runtime Environment. In order for it to work properly you will need to have 
-#### Java installed on your system. 
+### This tool uses the Java Runtime Environment. In order for it to work properly you will need to have Java installed on your system. 
 
-Here are links to installation media: 
+<p>Here are links to installation media: 
 Windows 10: https://www.java.com/en/download/win10.jsp
 Linux: https://java.com/en/download/help/linux_x64_install.xml
-Mac OS: https://java.com/en/download/faq/java_mac.xml
+Mac OS: https://java.com/en/download/faq/java_mac.xml</p>
 
 <pre>  _____ _             _____            _   _             _____         _
  |_   _(_)_ __  ___  |_   _| _ __ _ __| |_(_)_ _  __ _  |_   _|__  ___| |
