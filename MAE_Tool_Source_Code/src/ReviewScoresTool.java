@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+
 /*
  * @author Jared Scott
  */
@@ -78,7 +79,7 @@ public class ReviewScoresTool {
             BigDecimal b = a.setScale(2, RoundingMode.UP);
             this.score = b.doubleValue();
             if (!selfDone && toggleOverride) {
-                this.score = 0;//Sets the score to 0 if the self assessment is incomplete and the check-box is checked. 
+                this.score = 0;//Sets the score to 0 if the self assesment is incomplete and the checkbox is checked. 
             }
         }
         public String toString() {
@@ -162,7 +163,7 @@ public class ReviewScoresTool {
     }
     
     public static void runReview() {
-        //Main method for outputting data to the canvas file within the Reviews Scores Tool.
+        //Main method for outputing data to the canvas file within the Reviews Scores Tool.
         boolean percentsValid = true;
         try {
             getSelection();
@@ -277,7 +278,7 @@ public class ReviewScoresTool {
             //Looping through the rows reading the data
             while ((row = csvReader.readLine()) != null) {
                 rowCount += 1;
-                String[] rowList = row.split(","); //Splitting the csv
+                String[] rowList = row.split(","); //Spliting the csv
                 if (rowCount == 0) { //First row
                     int colCount = 0;
                     //Looping through columns within the row
@@ -344,7 +345,7 @@ public class ReviewScoresTool {
         int numQues = 0;
         try {
             FileInputStream fisT = new FileInputStream(fileNameRev); //Creates an input stream for the xlsx/xls file.      
-            Workbook workbookRev = null; //Instantiates a Workbook instance of an xlsx/xls file.
+            Workbook workbookRev = null; //Instatiates a Workbook instance of an xlsx/xls file.
             //Determines the file type and constructs the appropriate workbook object.
             if(fileNameRev.toLowerCase().endsWith("xlsx")) { 
                     workbookRev = new XSSFWorkbook(fisT);
@@ -362,8 +363,8 @@ public class ReviewScoresTool {
             if (rowCount == 0) {
                 int col = 0;
                 for (Cell cell : row) {
-                    //Crawls through the cells in the row identifying the questions from the survey.
-                    //Scrapes this data and stores it for further evaluation. 
+                    //Crawls through the cells in the row idcentifying the questions from the survey.
+                    //Scrapes this data and stores it fopr further evaluation. 
                     String[] cellList = cell.toString().split(" ");
                     if (cell.toString().toLowerCase().equals("contribution peer average")) { 
                         contributionIndex = col;
@@ -498,3 +499,4 @@ public class ReviewScoresTool {
         possiblePoints.clear();
     }
 }
+

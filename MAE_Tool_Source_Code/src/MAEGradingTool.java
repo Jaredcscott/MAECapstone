@@ -41,20 +41,20 @@ public class MAEGradingTool extends javax.swing.JFrame
     //These variables are used across the different tools.
     //Decimal format for uniformity
     static DecimalFormat df = new DecimalFormat("#,###,##0.0");
-    //This data file stores the persistence variables, it is saved upon exit and loaded upon start
-    static String DATA_FILE = "src\\Data.cfg"; //Change src to lib before building
+    //This data file stores the persistance variables, it is saved upon exit and loaded upon start
+    static String DATA_FILE = "lib\\Data.cfg"; //Change src to lib before building
     //This is the file where the team sorting tool stores the lowest team data
-    static String TEAM_FILE = "src\\lowestTeam.dat"; //Change src to lib before building
-    //This is the filename for the output files within the team sorting tool. different teams will be numbered IE: Team1, Team2
+    static String TEAM_FILE = "lib\\lowestTeam.dat"; //Change src to lib before building
+    //This is the filename for the output files within the team soritng tool. different teams will be numbered IE: Team1, Team2
     static String TEAM_OUTPUT = "Team";
     //This is the filename for thelowest sort from the team sorting tool.
     static String BEST_TEAM_OUTPUT = "Best Sort";
     //This is the icon for the Tool's main window
-    static String ICON = "src\\Images\\mae.png"; //Change src to lib before building
+    static String ICON = "lib\\Images\\mae.png"; //Change src to lib before building
     //This is the locked icon for the Team sorting tool's lock functionality
-    static String iconLocked = "src\\Images\\iconLocked.jpg"; //Change src to lib before building
+    static String iconLocked = "lib\\Images\\iconLocked.jpg"; //Change src to lib before building
     //This is the unlocked icon for the Team sorting tool's lock functionality
-    static String iconUnlocked = "src\\Images\\iconUnlocked.jpg"; //Change src to lib before building
+    static String iconUnlocked = "lib\\Images\\iconUnlocked.jpg"; //Change src to lib before building
 
     
     //============================Class Declarations============================\\
@@ -226,12 +226,13 @@ public class MAEGradingTool extends javax.swing.JFrame
                 MAEGradingTool app = new MAEGradingTool();
                 app.loadState();
                 teamScroll.getVerticalScrollBar().setUnitIncrement(16);
-                reviewScoresScroll.getVerticalScrollBar().setUnitIncrement(16); //Setting scroll bar scale for reviews score tool
+                reviewScoresScroll.getVerticalScrollBar().setUnitIncrement(16);
                 app.setVisible(true);
                 app.toggleOverrideActionPerformed(null);
                 System.out.println("Toggled Start: " + ReviewScoresTool.toggleOverride);
                 assigned.setVisible(false);
                 sorting.setVisible(false);
+                //sorting.setVisible(false);
                 saved.setText("       ");
                 display.setLayout(new BoxLayout(display, BoxLayout.Y_AXIS));
                 display.setAlignmentX(MAEGradingTool.display.LEFT_ALIGNMENT);
@@ -345,7 +346,15 @@ public class MAEGradingTool extends javax.swing.JFrame
         ReviewScoresTool.scanReview(); //Scans the file if the file location is changed.
     }
 
-    private void reviewsLocActionPerformed(java.awt.event.ActionEvent evt) {
+    private void canvasLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_canvasLocActionPerformed
+        //TimeTrackingTool.scan("canvas"); //Scans the file if the file location is changed.
+    }//GEN-LAST:event_canvasLocActionPerformed
+
+    private void timeLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLocActionPerformed
+       // TimeTrackingTool.scan("time"); //Scans the file if the file location is changed.
+    }//GEN-LAST:event_timeLocActionPerformed
+
+    private void reviewsLocActionPerformed(java.awt.event.ActionEvent evt) {                                           
         ReviewScoresTool.scanReview(); //Scans the file if the file location is changed.
     }
     
@@ -359,6 +368,7 @@ public class MAEGradingTool extends javax.swing.JFrame
             String selection = canvasWeekSelection.getSelectedItem().toString();
             TimeTrackingTool.startWeekCanvas = Integer.parseInt(selection.substring(2,selection.length())); 
         }
+        System.out.println("Start Canvas Week: " + TimeTrackingTool.startWeekCanvas + " Cols: " + TimeTrackingTool.canvasWeekCols.toString());
         TimeTrackingTool.askedTime = false;
     }
 
@@ -430,7 +440,7 @@ public class MAEGradingTool extends javax.swing.JFrame
             SwingWorker worker = new SwingWorker<String, String>() {
                 @Override
                 protected String doInBackground() throws Exception {
-                    int totalPreferenceScore = TeamSortingTool.sortTeams();
+                    int totalPreferenceScore = TeamSortingTool.startSort();
                     return "" + totalPreferenceScore; //Returns the text to be set on the JTextArea
                 }
                 @Override
@@ -459,7 +469,6 @@ public class MAEGradingTool extends javax.swing.JFrame
     
     private void assignActionPerformed(java.awt.event.ActionEvent evt) {
         if (TeamSortingTool.matchingScanned) {
-            //Displaying 'Assigned' to user
             Thread displayAssigned = new Thread(){
                 public void run(){
                     assigned.setVisible(true);
@@ -472,9 +481,8 @@ public class MAEGradingTool extends javax.swing.JFrame
                 }
             };
             displayAssigned.start();
-            //Looping through students
             for ( int i = 0; i < TeamSortingTool.studentsMatching.size(); i++){
-                TeamSortingTool.StudentMatching student = TeamSortingTool.studentsMatching.get(i);
+                TeamSortingTool.StudentMatching student = TeamSortingTool.studentsMatching.get(i); 
                 if (studentSel.getSelectedItem().toString().contains(student.name)) {
                     if (!(student.assigned)) {
                         for (TeamSortingTool.Team team : TeamSortingTool.teamsArray) {
@@ -677,7 +685,6 @@ public class MAEGradingTool extends javax.swing.JFrame
     protected static javax.swing.JComboBox<String> timeWeekSelection;
     private javax.swing.JCheckBox toggleOverride;
     // End of variable declaration
-    
     @SuppressWarnings("unchecked")
     //===============================Setting Up The Form And Components================================\\
     private void initComponents() {
@@ -765,7 +772,19 @@ public class MAEGradingTool extends javax.swing.JFrame
 
         timeLab.setText("Time Tracking Export from Edusourced (E.g. Time_Overview_Export_20200331.xlsx):");
         timeTracking.add(timeLab, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 570, 40));
+
+        timeLoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timeLocActionPerformed(evt);
+            }
+        });
         timeTracking.add(timeLoc, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, 570, 40));
+
+        canvasLoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                canvasLocActionPerformed(evt);
+            }
+        });
         timeTracking.add(canvasLoc, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 570, 40));
 
         browseCanvas.setText("Browse");

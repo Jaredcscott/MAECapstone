@@ -35,9 +35,9 @@ public class TeamSortingTool {
     //TEAM SORTING TOOL
     static int NA_PREFERENCE_VALUE = 6; //Indicates the default preference score for N/A's within the Data file
     static int TARGET_PREFERENCE; //See line 482
-    static boolean sorting = false; //Used to identify if the application is currently in a sorting state
+    static boolean sorting = false; //Used to identify if the application is currenlt in a sorting state
     static String matchingFile; //Matching Data File Location
-    static boolean inputValidMat = false; //Used for input validation when outputting to the canvas file.
+    static boolean inputValidMat = false; //Used for input validation when outputing to the canvas file.
     //Arrays used to scrape data.
     static ArrayList<StudentMatching> studentsMatching = new ArrayList<StudentMatching>();
     static ArrayList<Team> teamsArray = new ArrayList<Team>();
@@ -49,6 +49,8 @@ public class TeamSortingTool {
     static int lowestScore = Integer.MAX_VALUE;
     static int curScore = Integer.MAX_VALUE;
     static int countBig = 0;
+    static Utilities.MinHeap heap = new Utilities.MinHeap(5010);
+    static boolean exit = false;
     
     //This class is used to store all data related to a team for the Matching tool 
     public static class Team implements Serializable { 
@@ -154,7 +156,7 @@ public class TeamSortingTool {
         Boolean assigned; //Is the student assigned?
         String teamPriority; //Currently assigned team's position in the teamPriorities array
         Boolean locked; //Has the student been locked to its assigned team
-        JCheckBox checkbox; //The students check-box component
+        JCheckBox checkbox; //The students checkbox component
         JButton button; //Remove button
         
         public StudentMatching(String name, ArrayList<String> priorities, String note){
@@ -168,7 +170,7 @@ public class TeamSortingTool {
         }
         
         public void addComponants(StudentMatching student) {          
-            JCheckBox studentBox = new JCheckBox(student.name + " Preference score: " + student.teamPriority);
+            JCheckBox studentBox = new JCheckBox(student.name + " Preferece score: " + student.teamPriority);
             BufferedImage img = null;
             try {
                 img = ImageIO.read(new File(MAEGradingTool.iconUnlocked));
@@ -198,7 +200,7 @@ public class TeamSortingTool {
         }
         
         public void unsetTeam(){
-            //Unsets the students team
+            //Unsets the studnets team
             if(!this.locked && !sorting) {
                 this.assignedTeam = "";
                 this.assigned = false;
@@ -328,9 +330,15 @@ public class TeamSortingTool {
             });
             return add;
         }
-        
-        
-        
+    }
+    
+    public static class Sort {
+        ArrayList<Team> teams;
+        int sortScore;
+        public Sort(ArrayList<Team> teams, int sortScore) {
+            this.teams = teams;
+            this.sortScore = sortScore;
+        }
     }
     //=============================Scanning Methods=============================\\
     public static void scanMatch(){
@@ -390,7 +398,7 @@ public class TeamSortingTool {
     public static void getColsMatch(String fileNameMat) {
         try {
             FileInputStream fisT = new FileInputStream(fileNameMat); //Creates an input stream for the xlsx/xls file.      
-            Workbook workbookMat = null; //Instantiates a Workbook instance of an xlsx/xls file.
+            Workbook workbookMat = null; //Instatiates a Workbook instance of an xlsx/xls file.
             //Determines the file type and constructs the appropriate workbook object.
             if(fileNameMat.toLowerCase().endsWith("xlsx")) {
                     workbookMat = new XSSFWorkbook(fisT);
@@ -623,6 +631,28 @@ public class TeamSortingTool {
         }
     }
     
+    public static int startSort(){
+        int sortScore = 999;
+        exit = false;
+        int count = 0;
+        while (count < 5000) {
+            sortScore = sortTeams();
+            count += 1;
+            if (exit) {
+                break;
+            }
+        }
+        try {
+            Sort minSort = heap.remove();
+            teamsArray = minSort.teams;
+            System.out.println(minSort.sortScore);
+            return minSort.sortScore;
+        }
+        catch (Exception e) {
+            return 999;
+        }
+    }
+    
     public static int sortTeams(){
         sorting = true;
         int totPrefScore = 999999; //Trying to minimize, start large
@@ -631,9 +661,12 @@ public class TeamSortingTool {
         while (totPrefScore > target_preference) {
             clearTeams(false); //Clear the teams 
             addMembers(); //Add an initial selection of team members by chosen priorities
-            balanceTeams(); //Balances the teams with some intelligence 
+            balanceTeams(); //Balances the teams with some inteligence 
             cleanUp(); //Ensures the sort is valid and all students have been assigned. 
             //Summing the preference scores 
+            if (exit) {
+                break;
+            }
             totPrefScore = 0;
             for (Team team : teamsArray) {
                 totPrefScore += team.preferenceScore;
@@ -668,9 +701,18 @@ public class TeamSortingTool {
                 
             }
         }
-        countBig = 0;
-        sorting = false;
-        return totPrefScore;
+        if (!exit) {
+            countBig = 0;
+            sorting = false;
+            Sort curSort = new Sort(teamsArray, totPrefScore);
+            heap.insert(curSort);
+            return totPrefScore;
+        }
+        else {
+            countBig = 0;
+            sorting = false;
+            return 0;
+        }
     }
     
     public static void cleanUp(){
@@ -686,6 +728,7 @@ public class TeamSortingTool {
                         if (Integer.parseInt(pref.split(",")[1]) <= 3 && !student.assigned){
                            for(Team team : teamsArray){
                                if(team.name.equals(pref.split(",")[0]) && (team.members.size() < team.maxMembers)){
+                                   //System.out.println(student.name  + " Added to team: " + team.name);
                                    team.addMember(student);
                                    break;
                                }
@@ -720,6 +763,7 @@ public class TeamSortingTool {
                         }
                     }
                 }
+                
                 if(count > 150000) {
                     for(StudentMatching student : studentsMatching) {
                         if(student.assigned == false) {
@@ -728,20 +772,29 @@ public class TeamSortingTool {
                                 if((team.members.size() < team.maxMembers)){
                                     team.addMember(student);
                                     MAEGradingTool.currentSort.setText("Adjust team member ranges and try again. No reasonable solution found.");
+                                    
                                     countBig += 1;
+                                    exit = true;
                                     break;
                                 }
                                 
                             } 
                         }
+                        if (exit) {
+                            break;
+                        }
                     }
                 }
+            }
+            if (exit) {
+                clearTeams(false);
+                break;
             }
         }
     }
     
     public static void balanceTeams(){
-        //Counting how many students are needed to balance the sort.
+        //Counting how many studnets are needed to balance the sort.
         int needed = 0;
         for(Team team : teamsArray) {
             if(team.members.size() < team.minMembers) {
@@ -752,7 +805,7 @@ public class TeamSortingTool {
         for(Team team : teamsArray) {
             if((team.members.size() > team.minMembers) && needed > 0) {
                 Collections.shuffle(team.members);
-                boolean removableStudentFound = false; //Boolean used to find an eligible student 
+                boolean removableStudentFound = false; //Boolean used to find an elible student 
                 ArrayList<StudentMatching> removeArray = new ArrayList<StudentMatching>();
                 //Looping through students looking for potential members to take. 
                 for (int index = 0; index < team.members.size(); index++) {
@@ -791,7 +844,7 @@ public class TeamSortingTool {
     }
     
     public static void addMembers() {
-        //Assigning least popular teams any preferred members.
+        //Assigning least popular teams any prefered members.
         for (Team team : teamsArray){
             if(team.popularity > 15){
                 for (StudentMatching student : studentsMatching) {
@@ -802,7 +855,7 @@ public class TeamSortingTool {
                 }
             }
         }
-        Collections.shuffle(studentsMatching); //Shuffling the students first for fairness 
+        Collections.shuffle(studentsMatching); //Suffling the students first for fairness 
         //This loop gives, in random order, each person exactly what they want if possible
         ArrayList<Integer> nums = new ArrayList<Integer>(); //Array representing the priority scores  
         for (int i = 1; i < 6 ; i ++) {
@@ -812,7 +865,7 @@ public class TeamSortingTool {
             //Looping through students 
             for(StudentMatching student : studentsMatching) {
                 if(!(student.assigned)) { //Is the student assigned? 
-                    //Looping through the currently selected students team priorities  
+                    //Looping through the currently selected students team priorites  
                     for(String teamString : student.teamPriorities) { 
                         //Finding the team matching the current priority score.
                         if (teamString.split(",")[1].equals("" + num)) {
@@ -850,7 +903,7 @@ public class TeamSortingTool {
             team.preferenceScore = preferenceScore;
         }
         if(update) {
-            getStudents(); //Updates the drop down menu. 
+            getStudents(); //Updates the drop down mennu. 
             updateDisplay(false); //Updates the display
         }
     }

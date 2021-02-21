@@ -19,7 +19,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 
 public class TimeTrackingTool {
-    static boolean overwrite = false; //Used to either pass over or overwrite existing data entries in the canvas file. 
+    static boolean overwrite = false; //Used to either pass over or overwrite exsisting data entries in the canvas file. 
     static boolean askedTime = false; //Used to indicate if the user has been asked to overwrite data. 
     static ArrayList<MAEGradingTool.Student> studentsMast = new ArrayList<MAEGradingTool.Student>(); //Master array for student data. 
     static ArrayList<StudentTime> studentsTime = new ArrayList<StudentTime>(); //Data scraped from the Time Tracking file. 
@@ -35,7 +35,7 @@ public class TimeTrackingTool {
     static int startWeek; //Output starting location.  
     static String[] firstRowC; //Used to store the first row of the canvas file.
     static String[] secondRowC; //Used to store the second row of the canvas file.
-    static boolean inputValid = false; //Used for input validation when outputting to the canvas file. 
+    static boolean inputValid = false; //Used for input validation when outputing to the canvas file. 
     static int maxVal; //Max value for student scores. 
     static int endWeekCanvas; //This is used to stop writing output to the canvas file. 
     
@@ -57,14 +57,14 @@ public class TimeTrackingTool {
     //=============================Scanning Methods=============================\\
     public static void scan(String type){
         try{
-            //Removes items from the drop down menu first
+            //Removes items frmo the drop down menu first
            MAEGradingTool.timeWeekSelection.removeAllItems();
         }
         catch (Exception e) {
            e.printStackTrace();
         }
         try{
-            //Removes items from the drop down menu first
+            //Removes items frmo the drop down menu first
            MAEGradingTool.canvasWeekSelection.removeAllItems();
         }
         catch (Exception e) {
@@ -112,7 +112,7 @@ public class TimeTrackingTool {
                 //Matching names between the canvas file and the time data file 
                 for (MAEGradingTool.StudentCanvas studentC : studentsCanvas) {
                     boolean matchFound = false;
-                    //Looping through students to match names 
+                    //Looping through students tomatch names 
                     for(StudentTime studentT : studentsTime) {
                         if (Utilities.compareNames(studentC.nameList, studentT.nameList)) {
                             //Adding students to the master array
@@ -122,7 +122,7 @@ public class TimeTrackingTool {
                         }
                     }
                     if (!(matchFound)) {
-                        //Adding in the original canvas row if no match is found 
+                        //Adding in the originak canvas row if no match is found 
                         studentsMast.add(new MAEGradingTool.Student(studentC.nameList,studentC.row, studentC.data));
                     }
                 }
@@ -194,7 +194,7 @@ public class TimeTrackingTool {
     public static void getColsTime(String fileNameTime) {
         try {
             FileInputStream fisT = new FileInputStream(fileNameTime); //Creates an input stream for the xlsx/xls file.      
-            Workbook workbookTime = null; //Instantiates a Workbook instance of an xlsx/xls file.
+            Workbook workbookTime = null; //Instatiates a Workbook instance of an xlsx/xls file.
             //Determines the file type and constructs the appropriate workbook object.
             if(fileNameTime.toLowerCase().endsWith("xlsx")) {  
                 workbookTime = new XSSFWorkbook(fisT);
@@ -252,14 +252,14 @@ public class TimeTrackingTool {
         }
     }
     public static void runTime() {
-        //Main method for outputting data to the canvas file within the Time Tracking Tool. 
+        //Main method for outputing data to the canvas file within the Time Tracking Tool. 
         boolean maxValValid;
         startWeekCanvas = Integer.parseInt(MAEGradingTool.canvasWeekSelection.getSelectedItem().toString().substring(2,MAEGradingTool.canvasWeekSelection.getSelectedItem().toString().length()));
         String[] selection = MAEGradingTool.timeWeekSelection.getSelectedItem().toString().split(" ");
         startWeek = Integer.parseInt(selection[1]);
         startWeekTime = Integer.parseInt(TimeTrackingTool.weeksArray.get(TimeTrackingTool.startWeek - 1).split(" ")[2]);
         try {
-            //Attempting to grab the max score value from the input field. 
+            //Atempting to grab the max score value from the input field. 
             try {
                 maxVal = Integer.parseInt(MAEGradingTool.maxValTxt.getText());
                 maxValValid = true;
@@ -275,18 +275,27 @@ public class TimeTrackingTool {
                     int choice = 0;
                     output.add(String.join(",", Utilities.getRow(sourceFile,1)) + "\n");
                     output.add(String.join(",", Utilities.getRow(sourceFile,2)) + "\n");
-                    
-                    int startIndex = canvasWeekCols.get(startWeekCanvas);
-                    System.out.println("Start Canvas Week: " + startWeekCanvas + " Start Index: " + startIndex + " Cols: " + canvasWeekCols.toString());
+                    int startIndex = 0; // = canvasWeekCols.get(startWeekCanvas);
+                    int cellCount = 0;
+                    String[] rowCTemp = Utilities.getRow(canvasFile,1);
+                    for (String cell : rowCTemp) {
+                        if (cell.split(" ")[0].startsWith("TR")) {
+                            if(cell.split(" ")[0].substring(2).equals("" + startWeekCanvas)){
+                                startIndex = cellCount + 1;
+                                break;
+                            }
+                        }
+                        cellCount += 1;
+                    }
+                    //System.out.println("Start Canvas Week: " + startWeekCanvas + " Start Index: " + startIndex + " Cols: " + canvasWeekCols.toString());
                     for (MAEGradingTool.Student student : studentsMast) {
-                        //Iterating through the master student array and adding their data to the canvas output file. 
+                        //Iterating through the master student array and addding their data to the canvas output file. 
                         if(student.data.isEmpty()) {
                             output.add(student.row + "\n");
                         }
                         else {
                             //Grabbing the students row from the canvas file. 
                             String[] canvasRow = Utilities.getRow(sourceFile, student.rowCan + 1);
-                            
                             //Checking if there is exsistant data in the canvas file location, 
                             //If there is data present in that cell ask the user if they want to overwrite
                             //The user will only be asked to over write exsistant data a single time.
