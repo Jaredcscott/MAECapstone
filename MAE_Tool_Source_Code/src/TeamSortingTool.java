@@ -7,8 +7,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Stack;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,11 +54,27 @@ public class TeamSortingTool {
     static int lowestScore = Integer.MAX_VALUE;
     static int curScore = Integer.MAX_VALUE;
     static int countBig = 0;
-    static Utilities.MinHeap heap = new Utilities.MinHeap(5010);
+    static Utilities.MinHeap heap = new Utilities.MinHeap(501);
     static boolean exit = false;
+    static int heapLow = 99999;
+    static Sort sortLow;
+    static PriorityQueue<Sort> minHeap = new PriorityQueue<Sort>(502);
+    static int masterLow = 99999;
+    static int masterLowCnt = 5;
+    static Sort masterSort = null;
+    static Sort lastSort1 = null;
+    static Sort lastSort2 = null;
+    static Sort lastSort3 = null;
+    static int curCount = 0;
+    static boolean updateSort = false;
+    static boolean lowestFound = false;
+    static Sort doneMast = null;
+    
+    static boolean first = true;
+    
     
     //This class is used to store all data related to a team for the Matching tool 
-    public static class Team implements Serializable { 
+    public static class Team implements Serializable, Cloneable { 
         String name;
         ArrayList<StudentMatching> members;
         ArrayList<HelperStudent> prefStudents;
@@ -71,6 +92,11 @@ public class TeamSortingTool {
             this.maxMembers = maxMembers;
             this.preferenceScore = 0;
             this.column = col;
+        }
+        
+        public Object clone() throws CloneNotSupportedException
+        {
+            return super.clone();
         }
         
         public void setTeamMinMembers(int minNumMembers) {
@@ -148,7 +174,7 @@ public class TeamSortingTool {
     }
     
     //This class is used to scrape data from the Edusourced Student Matching Report
-    public static class StudentMatching implements Comparable< StudentMatching >, Serializable{
+    public static class StudentMatching implements Comparable< StudentMatching >, Serializable, Cloneable{
         String name;
         String note; //Note from the data file. May contain team preference information
         ArrayList<String> teamPriorities; //This students team preferences 
@@ -170,7 +196,7 @@ public class TeamSortingTool {
         }
         
         public void addComponants(StudentMatching student) {          
-            JCheckBox studentBox = new JCheckBox(student.name + " Preferece score: " + student.teamPriority);
+            JCheckBox studentBox = new JCheckBox(student.name + " Preference score: " + student.teamPriority);
             BufferedImage img = null;
             try {
                 img = ImageIO.read(new File(MAEGradingTool.iconUnlocked));
@@ -267,7 +293,7 @@ public class TeamSortingTool {
     }
     
     //Helper class to display the student at the bottom of the team 
-    public static class HelperStudent implements Serializable{
+    public static class HelperStudent implements Serializable, Cloneable{
         StudentMatching student;
         String teamName;
         JButton addButton;
@@ -304,7 +330,6 @@ public class TeamSortingTool {
                     }
                     else {  
                         student.locked = false;
-
                         for (TeamSortingTool.Team team : TeamSortingTool.teamsArray) {
                             if (team.name.equals(student.assignedTeam)) {
                                 team.removeMember(student);
@@ -332,13 +357,50 @@ public class TeamSortingTool {
         }
     }
     
-    public static class Sort {
-        ArrayList<Team> teams;
-        int sortScore;
-        public Sort(ArrayList<Team> teams, int sortScore) {
-            this.teams = teams;
-            this.sortScore = sortScore;
+    public static class Sort implements Comparable<Sort>, Cloneable {
+        private ArrayList<Team> teams;
+        private int sortScore;
+        public Sort(ArrayList<Team> teams) {
+            this.teams = new ArrayList<Team>();
+            for (Team team : teams) {
+                this.teams.add(team);
+            }
         }
+        
+        public int getScore() {
+            int score = 0;
+            for (Team team : this.teams) {
+                score += team.preferenceScore;
+            }
+            this.sortScore = score;
+            return this.sortScore;
+        }
+        
+        public String toString() {
+            //Displays all relevant team info to user
+            String  sortString = "Score: " + this.sortScore + "\n" +  this.teams.toString() + "\n" + this.getScore();
+            return sortString;
+        } 
+        @Override
+        public int compareTo(Sort other) {
+            return this.getScore() >= other.getScore() ? -1 : 0;
+        }
+        
+        public Object clone() throws CloneNotSupportedException
+        {
+            return super.clone();
+        }
+    }
+    
+    public static class SortSorter implements Comparator<Sort> {
+        public SortSorter() {
+            
+        }
+        @Override
+        public int compare(Sort sort1, Sort sort2) {
+            return sort1.compareTo(sort2);
+        }
+
     }
     //=============================Scanning Methods=============================\\
     public static void scanMatch(){
@@ -594,7 +656,6 @@ public class TeamSortingTool {
                             count += 1;
                         }
                     }
-                    
                     if (count == 3) { //Adds four students per row
                         MAEGradingTool.display.add(prefBox);
                         prefBox = new JPanel();
@@ -631,33 +692,46 @@ public class TeamSortingTool {
         }
     }
     
-    public static int startSort(){
+    public static int startSort() throws CloneNotSupportedException{
         int sortScore = 999;
         exit = false;
         int count = 0;
-        while (count < 5000) {
-            sortScore = sortTeams();
+        int boogCount = 0;
+        boolean done = false;
+        List<Sort> sortList = new ArrayList<Sort>();
+        while (count < 500) {
+            sortScore = sortTeams(sortList);
             count += 1;
+            if (count >= 500) {
+                done = true;
+            }
             if (exit) {
+                done = true;
                 break;
             }
         }
         try {
-            Sort minSort = heap.remove();
-            teamsArray = minSort.teams;
-            System.out.println(minSort.sortScore);
-            return minSort.sortScore;
+            Sort minSort;
+            if(doneMast != null) {
+                minSort = (Sort) doneMast.clone();
+            }
+            else {
+                minSort = (Sort) heap.removeMin();
+            }
+            teamsArray = (ArrayList<Team>) minSort.teams.clone();
+            return minSort.getScore();
         }
         catch (Exception e) {
             return 999;
         }
     }
-    
-    public static int sortTeams(){
+    public static int sortTeams(List<Sort> sorts) throws CloneNotSupportedException{
+        MAEGradingTool.currentSort.setText("");
         sorting = true;
         int totPrefScore = 999999; //Trying to minimize, start large
         int target_preference = TARGET_PREFERENCE;
         int lowestPrefScore = lowestScore;
+        Stack<Sort> localLow = new Stack<Sort>();
         while (totPrefScore > target_preference) {
             clearTeams(false); //Clear the teams 
             addMembers(); //Add an initial selection of team members by chosen priorities
@@ -665,13 +739,26 @@ public class TeamSortingTool {
             cleanUp(); //Ensures the sort is valid and all students have been assigned. 
             //Summing the preference scores 
             if (exit) {
-                break;
+                ArrayList<Team> copy = new ArrayList<Team>();
+                for (Team team : teamsArray) {
+                    copy.add((Team) team.clone());
+                }
+                doneMast = new Sort(copy);
+                if(doneMast.getScore() > TARGET_PREFERENCE) {
+                    MAEGradingTool.currentSort.setText("No ideal solution found. Adjust team limits for better sort quality");
+                    TARGET_PREFERENCE = doneMast.getScore()-15; 
+                }
+                else {
+                    MAEGradingTool.currentSort.setText("Current Sort Score: "  + doneMast.getScore());
+                }
+                return doneMast.getScore();
             }
             totPrefScore = 0;
             for (Team team : teamsArray) {
                 totPrefScore += team.preferenceScore;
             }
             //adjusting the target preference score to hopefully get a better sorting for additional sorts. 
+//            System.out.println("HERE: " + totPrefScore + " : target" + target_preference);
             if (totPrefScore - target_preference > 100) {
                 target_preference += 25;
             }
@@ -698,21 +785,87 @@ public class TeamSortingTool {
             }
             if (totPrefScore <= lowestPrefScore) {
                 lowestPrefScore = totPrefScore;
-                
             }
         }
+        ArrayList<Team> copy = new ArrayList<Team>();
+        for (Team team : teamsArray) {
+            copy.add((Team) team.clone());
+        }
+        Sort curSort1 = new Sort(copy);
+        if (masterSort == null) {
+            masterSort = (Sort) curSort1.clone();
+            masterLow = curSort1.getScore();
+            lastSort1 = masterSort;
+            curCount += 1;
+        }
+        else {
+            if (masterSort.getScore() >= curSort1.getScore()) {
+                masterSort = (Sort) curSort1.clone();
+                masterLow = curSort1.getScore();
+                masterLowCnt -= 1;
+                updateSort = true; 
+            }
+            if (updateSort) {
+                updateSort = false;
+                if (curCount == 3) {
+                    lastSort3 = (Sort) lastSort2.clone();
+                    lastSort2 = (Sort) lastSort1.clone();
+                    lastSort1 = (Sort) masterSort.clone();
+                }
+                else if (curCount == 2) {
+                    lastSort3 = (Sort) lastSort2.clone();
+                    lastSort2 = (Sort) lastSort1.clone();
+                    lastSort1 = (Sort) masterSort.clone();
+                    curCount += 1;
+                }
+                else if (curCount == 1) {
+                    lastSort2 = (Sort) lastSort1.clone();
+                    lastSort1 = (Sort) masterSort.clone();
+                    curCount += 1;
+                }
+                if(curCount == 3) {
+//                    System.out.println(lastSort1.getScore() + " : " + lastSort2.getScore() + " : " + lastSort3.getScore());
+                    if (lastSort1.getScore() == lastSort3.getScore() && lastSort1.getScore() == lastSort2.getScore()) {
+                        if ( doneMast == null ) {
+                            doneMast = (Sort) masterSort.clone();
+                        }
+                        else {
+                            if (doneMast.getScore() > masterSort.getScore()) {
+                                doneMast = (Sort) masterSort.clone();
+                                return doneMast.getScore();
+                            }
+                        }
+                    }
+                }
+            }
+        }    
         if (!exit) {
             countBig = 0;
             sorting = false;
-            Sort curSort = new Sort(teamsArray, totPrefScore);
+            int score = 0;
+            for (Team team : teamsArray) {
+                score += team.preferenceScore;
+            }
+            Sort curSort = new Sort(teamsArray);
+            if (score < heapLow) {
+                heapLow = score;
+                sortLow = curSort;
+            }
             heap.insert(curSort);
-            return totPrefScore;
+            masterLowCnt -= 1;
+            if (masterLowCnt <= 0 ) {
+                return curSort1.getScore();
+            }
+            else {
+                return sortTeams(sorts);
+            }
         }
         else {
             countBig = 0;
             sorting = false;
-            return 0;
+            return 999;
         }
+        
     }
     
     public static void cleanUp(){
@@ -728,7 +881,6 @@ public class TeamSortingTool {
                         if (Integer.parseInt(pref.split(",")[1]) <= 3 && !student.assigned){
                            for(Team team : teamsArray){
                                if(team.name.equals(pref.split(",")[0]) && (team.members.size() < team.maxMembers)){
-                                   //System.out.println(student.name  + " Added to team: " + team.name);
                                    team.addMember(student);
                                    break;
                                }
@@ -739,7 +891,6 @@ public class TeamSortingTool {
             }
             count += 1;
             if(count > 5000) {
-                
                 int numSlots = 0;
                 for (Team team : teamsArray) {
                     numSlots += team.maxMembers;
@@ -763,22 +914,78 @@ public class TeamSortingTool {
                         }
                     }
                 }
-                
-                if(count > 150000) {
+                if(count > 15000) {
+                    int studentCount = studentsMatching.size();
                     for(StudentMatching student : studentsMatching) {
                         if(student.assigned == false) {
                             allAssigned = false;
+                            int teamsMinTot = 0;
+                            int teamsMaxTot = 0;
+                            int assignedCount = 0;
+                            ArrayList<StudentMatching> unassignedStudents = new ArrayList<StudentMatching>();        
                             for(Team team : teamsArray){
-                                if((team.members.size() < team.maxMembers)){
-                                    team.addMember(student);
-                                    MAEGradingTool.currentSort.setText("Adjust team member ranges and try again. No reasonable solution found.");
-                                    
+                                teamsMinTot += team.minMembers;
+                                teamsMaxTot += team.maxMembers;     
+                                int unassigned = 0;
+                                for (StudentMatching student1 : studentsMatching) {
+                                    if (!student1.assigned) {
+                                        unassigned += 1; 
+                                        unassignedStudents.add(student1);
+                                    }
+                                    else {
+                                        assignedCount += 1;
+                                    }
+                                }
+                                int noneCount = 0;
+                                for (StudentMatching student1 : unassignedStudents){
+                                    boolean noneFound = true;
+                                    for (String teamPri : student1.teamPriorities) {
+                                        String[] teamArray = teamPri.split(",");
+                                        if (Integer.parseInt(teamArray[1]) <=3) {
+                                            for (Team team1 : teamsArray) {
+                                                if(teamPri.split(",")[0].equals(team1.name) && team1.members.size() < team1.maxMembers) {
+                                                    team1.addMember(student1);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (!student1.assigned) {
+                                        for (Team team2 : teamsArray) {
+                                            if(team2.members.size() < team2.maxMembers) {
+                                                team2.addMember(student1);
+                                                noneFound = false;
+                                                break;
+                                            }     
+                                        }
+                                    }
+                                    if (noneFound){
+                                            noneCount += 1;
+                                    }
+                                }
+                                for (StudentMatching student1 : studentsMatching) {
+                                    if (!student1.assigned) {
+                                        unassigned += 1; 
+                                    }
+                                    else {
+                                        assignedCount += 1;
+                                    }
+                                }
+                                
+                                if (unassigned == 0) {
+                                    sorting = false;
+                                    exit = true;
+                                    allAssigned = true;
+                                    return;
+                                }
+                                if (noneCount == unassignedStudents.size()) {
+                                    MAEGradingTool.currentSort.setText("Adjust team member ranges and try again. No reasonable solution found.");                                    
                                     countBig += 1;
                                     exit = true;
                                     break;
                                 }
-                                
-                            } 
+                            }
+                            
+                            
                         }
                         if (exit) {
                             break;
@@ -794,7 +1001,7 @@ public class TeamSortingTool {
     }
     
     public static void balanceTeams(){
-        //Counting how many studnets are needed to balance the sort.
+        //Counting how many students are needed to balance the sort.
         int needed = 0;
         for(Team team : teamsArray) {
             if(team.members.size() < team.minMembers) {

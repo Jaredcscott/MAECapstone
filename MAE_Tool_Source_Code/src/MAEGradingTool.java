@@ -16,6 +16,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -456,7 +457,9 @@ public class MAEGradingTool extends javax.swing.JFrame
                                 Utilities.storeObjects();
                             }
                         }
-                        currentSort.setText("Current Sort Score: "  + totalPreferenceScore);
+                        if (!TeamSortingTool.exit){
+                            currentSort.setText("Current Sort Score: "  + totalPreferenceScore);
+                        }
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
@@ -544,12 +547,46 @@ public class MAEGradingTool extends javax.swing.JFrame
 
     private void browseMatchingActionPerformed(java.awt.event.ActionEvent evt) {
         //Logic for the matching data file browser within the Team Sort tool.
+        TeamSortingTool.NA_PREFERENCE_VALUE = 6; //Indicates the default preference score for N/A's within the Data file
+        TeamSortingTool.TARGET_PREFERENCE = 0; //See line 482
+        TeamSortingTool.sorting = false; //Used to identify if the application is currenlt in a sorting state
+        TeamSortingTool.matchingFile =  null; //Matching Data File Location
+        TeamSortingTool.inputValidMat = false; //Used for input validation when outputing to the canvas file.
+        //Arrays used to scrape data.
+        TeamSortingTool.studentsMatching = new ArrayList<TeamSortingTool.StudentMatching>();
+        TeamSortingTool.teamsArray = new ArrayList<TeamSortingTool.Team>();
+        TeamSortingTool.popularityScores = new ArrayList<Integer>(); //Low score is better
+        TeamSortingTool.noteIndex = 0; //Used to scrape the notes from the data set. 
+        TeamSortingTool.matchingScanned = false; //Used to ensure the data file has been scanned prior to performing any action upon it. 
+        TeamSortingTool.printedTeams = 1; //Used as the initial counter for the team data output file.
+        TeamSortingTool.firstSort = true;
+        TeamSortingTool.lowestScore = Integer.MAX_VALUE;
+        TeamSortingTool.curScore = Integer.MAX_VALUE;
+        TeamSortingTool.countBig = 0;
+        TeamSortingTool.heap = new Utilities.MinHeap(501);
+        TeamSortingTool.exit = false;
+        TeamSortingTool.heapLow = 99999;
+        TeamSortingTool.sortLow = null;
+        TeamSortingTool.minHeap = new PriorityQueue<TeamSortingTool.Sort>(502);
+        TeamSortingTool.masterLow = 99999;
+        TeamSortingTool.masterLowCnt = 5;
+        TeamSortingTool.masterSort = null;
+        TeamSortingTool.lastSort1 = null;
+        TeamSortingTool.lastSort2 = null;
+        TeamSortingTool.lastSort3 = null;
+        TeamSortingTool.curCount = 0;
+        TeamSortingTool.updateSort = false;
+        TeamSortingTool.lowestFound = false;
+        TeamSortingTool.doneMast = null;
+
+        TeamSortingTool.first = true;
         TeamSortingTool.studentsMatching.clear();
         TeamSortingTool.teamsArray.clear();
         teamsSel.removeAllItems();
         display.removeAll();
         lowestLabel.setText("");
         currentSort.setText("");
+        TeamSortingTool.heap = new Utilities.MinHeap(501);
         //Making the Desktop the default location.
         String userDir = System.getProperty("user.home");
         final JFileChooser fc = new JFileChooser(userDir + "/Desktop");
@@ -616,8 +653,8 @@ public class MAEGradingTool extends javax.swing.JFrame
             }
             in.close();
             oIn.close();
-            
-            TeamSortingTool.updateDisplay(false);
+            currentSort.setText("");
+            TeamSortingTool.updateDisplay(true);
         }
         catch (ClassNotFoundException e) {
             e.printStackTrace();

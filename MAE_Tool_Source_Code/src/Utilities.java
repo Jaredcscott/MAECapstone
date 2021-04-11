@@ -120,7 +120,7 @@ public class Utilities {
     }
     
     public static class MinHeap { 
-        private Node[] Heap; 
+        public Node[] Heap; 
         private int size; 
         private int maxsize; 
 
@@ -131,15 +131,20 @@ public class Utilities {
             this.maxsize = maxsize; 
             this.size = 0; 
             Heap = new Node[this.maxsize + 1]; 
-            Heap[0] = new Node(new TeamSortingTool.Sort(new ArrayList<TeamSortingTool.Team>(),0)); 
+            Heap[0] = new Node(new TeamSortingTool.Sort(new ArrayList<TeamSortingTool.Team>())); 
         } 
         
         public class Node {
             TeamSortingTool.Sort sort;
-            int score;
+            private int score;
             public Node(TeamSortingTool.Sort sort){
                 this.sort = sort;
-                this.score = this.sort.sortScore;
+                this.score = this.sort.getScore();
+                
+                if (this.score > 0 && (TeamSortingTool.sortLow == null || this.score < TeamSortingTool.sortLow.getScore())) {
+                    TeamSortingTool.sortLow = this.sort;
+                    System.out.println("NEW LOW!!: " + this.sort.getScore());
+                }
             }
         }
 
@@ -197,7 +202,7 @@ public class Utilities {
 
                     // Swap with the left child and heapify 
                     // the left child 
-                    if (Heap[leftChild(pos)].score < Heap[rightChild(pos)].score) { 
+                    if (Heap[leftChild(pos)].score > Heap[rightChild(pos)].score) { 
                         swap(pos, leftChild(pos)); 
                         minHeapify(leftChild(pos)); 
                     } 
@@ -227,6 +232,11 @@ public class Utilities {
                 current = parent(current); 
             } 
         } 
+        
+        public Node[] getHeap() 
+        { 
+            return this.Heap;
+        } 
 
         // Function to print the contents of the heap 
         public void print() 
@@ -235,12 +245,12 @@ public class Utilities {
                 System.out.print(" PARENT : " + Heap[i].score 
                                  + " LEFT CHILD : " + Heap[2 * i].score 
                                  + " RIGHT CHILD :" + Heap[2 * i + 1].score); 
-                System.out.println(); 
-            } 
+                System.out.println();
+            }
+            
         } 
 
-        // Function to build the min heap using 
-        // the minHeapify 
+        // Function to build the min heap 
         public void minHeap() 
         { 
             for (int pos = (size / 2); pos >= 1; pos--) { 
@@ -250,11 +260,11 @@ public class Utilities {
 
         // Function to remove and return the minimum 
         // element from the heap 
-        public TeamSortingTool.Sort remove() 
+        public TeamSortingTool.Sort removeMin() 
         { 
-            TeamSortingTool.Sort popped = Heap[FRONT].sort; 
+            TeamSortingTool.Sort popped = Heap[FRONT].sort;
             Heap[FRONT] = Heap[size--]; 
-            minHeapify(FRONT); 
+            minHeapify(FRONT);
             return popped; 
         } 
     } 
