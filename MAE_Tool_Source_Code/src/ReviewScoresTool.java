@@ -7,8 +7,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -50,7 +53,8 @@ public class ReviewScoresTool {
     static String canvasFileR;  //Canvas File Location
     static int contributionIndex;  
     static int professionalismIndex;
-    static int contributionSelfIndex;  
+    static int contributionSelfIndex;
+    static int responseRateIndex;
     static int professionalismSelfIndex;
     static boolean toggleOverride;
     
@@ -161,6 +165,21 @@ public class ReviewScoresTool {
             e.printStackTrace();
         }
     }
+    private static String percentile(ArrayList<Double> dataArray) {
+        Collections.sort(dataArray);
+        
+        double vals = dataArray.size();
+        double curPercent =  0;
+        int count = 1;
+        for  (double score : dataArray) {
+            curPercent = count / vals;
+            if (curPercent > .80) {
+                return score + "";
+            }
+            count += 1;
+        }
+        return "Error: Check data file for null values";
+    }
     
     public static void runReview() {
         //Main method for outputing data to the canvas file within the Reviews Scores Tool.
@@ -180,6 +199,7 @@ public class ReviewScoresTool {
                     output.add(String.join(",", Utilities.getRow(sourceFile,1)) + "\n");
                     output.add(String.join(",", Utilities.getRow(sourceFile,2)) + "\n");
                     int startIndex = startWeekCanvasRev;
+                    ArrayList<Double> percentileArray = new ArrayList<Double>();
                     for (MAEGradingTool.Student student : studentsMastRev) {
                         //Iterating through the students in the master array and adding their data to the output file.
                         if(student.test == true) {
@@ -223,6 +243,7 @@ public class ReviewScoresTool {
                                     else {
                                         if (((student.score + "").length() > 3 && student.score < 10.0) || ((student.score + "").length() > 4 && (student.score < 100.0 && student.score > 10.0)) ) {
                                             student.score = Double.parseDouble(("" + student.score).substring(0, ("" + student.score).length() -1));
+                                            
                                         }
                                         canvasRow[startIndex] = "" + student.score;
                                     }
@@ -234,14 +255,24 @@ public class ReviewScoresTool {
                             }
                             output.add(String.join(",", canvasRow) + "\n");
                         }
+                        percentileArray.add(student.score);
                     }
-                    JOptionPane.showMessageDialog(null, "Success! Original Canvas File Updated");
-                    FileWriter writer = new FileWriter(canvasFileR); //Creating a writer to write to output file. 
-                    //Writing output to file. 
-                    for (String line : output) {
-                        writer.write(line);
+                    String percentile80 = percentile(percentileArray);
+                    MAEGradingTool.percentileText.setText("80th Percentile: " + percentile80);
+                    MAEGradingTool.percentileText.setVisible(true);
+                    //Writing output to file.
+                    try {
+                        FileWriter writer = new FileWriter(canvasFileR); //Creating a writer to write to output file.
+                        for (String line : output) {
+                            writer.write(line);
+                        }
+                        writer.close();
+                        JOptionPane.showMessageDialog(null, "Success! Original Canvas File Updated\n80th Percentile of Scores: " +  percentile80);
                     }
-                    writer.close();
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    
                     //Reseting values. 
                     overwriteRev = false;
                     askedRev = false;
@@ -366,6 +397,9 @@ public class ReviewScoresTool {
                     //Crawls through the cells in the row idcentifying the questions from the survey.
                     //Scrapes this data and stores it fopr further evaluation. 
                     String[] cellList = cell.toString().split(" ");
+                    if (cell.toString().toLowerCase().equals("users responded out of users prompted")) { 
+                        responseRateIndex = col;
+                    }
                     if (cell.toString().toLowerCase().equals("contribution peer average")) { 
                         contributionIndex = col;
                     }
@@ -390,6 +424,9 @@ public class ReviewScoresTool {
             while (rowIterator.hasNext()) {
                 ArrayList<Double> reviewScores = new ArrayList<Double>();
                 row = rowIterator.next(); //Grabs the row object
+                if ((row.getCell(responseRateIndex).toString().split("/")[0] + "").equals("0")) {
+                    continue;
+                }
                 if ((row.getCell(0).toString().startsWith("ALL PROJECTS AVERAGE"))) {
                     continue;
                 }
@@ -410,10 +447,10 @@ public class ReviewScoresTool {
                 boolean profUp = false;
                 boolean conSelfDone = false;
                 boolean profSelfDone = false;
-                if (Integer.parseInt("" + row.getCell(contributionIndex).toString().charAt(row.getCell(contributionIndex).toString().length() - 1)) >= 5){
+                if ((row.getCell(contributionIndex).toString().length() - 1) >  0 && Integer.parseInt("" + row.getCell(contributionIndex).toString().charAt(row.getCell(contributionIndex).toString().length() - 1)) >= 5){
                     conUp = true;
                 }
-                if (Integer.parseInt("" + row.getCell(professionalismIndex).toString().charAt(row.getCell(professionalismIndex).toString().length() -1)) >= 5){
+                if ((row.getCell(professionalismIndex).toString().length() -1) > 0 && Integer.parseInt("" + row.getCell(professionalismIndex).toString().charAt(row.getCell(professionalismIndex).toString().length() -1)) >= 5){
                     profUp = true;
                 }
                 double contribution;

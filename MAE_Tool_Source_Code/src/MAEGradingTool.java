@@ -233,6 +233,7 @@ public class MAEGradingTool extends javax.swing.JFrame
                 System.out.println("Toggled Start: " + ReviewScoresTool.toggleOverride);
                 assigned.setVisible(false);
                 sorting.setVisible(false);
+                percentileText.setVisible(false);
                 //sorting.setVisible(false);
                 saved.setText("       ");
                 display.setLayout(new BoxLayout(display, BoxLayout.Y_AXIS));
@@ -347,13 +348,13 @@ public class MAEGradingTool extends javax.swing.JFrame
         ReviewScoresTool.scanReview(); //Scans the file if the file location is changed.
     }
 
-    private void canvasLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_canvasLocActionPerformed
+    private void canvasLocActionPerformed(java.awt.event.ActionEvent evt) {                                          
         //TimeTrackingTool.scan("canvas"); //Scans the file if the file location is changed.
-    }//GEN-LAST:event_canvasLocActionPerformed
+    }                                         
 
-    private void timeLocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeLocActionPerformed
+    private void timeLocActionPerformed(java.awt.event.ActionEvent evt) {                                        
        // TimeTrackingTool.scan("time"); //Scans the file if the file location is changed.
-    }//GEN-LAST:event_timeLocActionPerformed
+    }                                       
 
     private void reviewsLocActionPerformed(java.awt.event.ActionEvent evt) {                                           
         ReviewScoresTool.scanReview(); //Scans the file if the file location is changed.
@@ -664,7 +665,7 @@ public class MAEGradingTool extends javax.swing.JFrame
         }
     }
     
-    // Variable declaration - do not modify
+    // Variables declaration - do not modify                     
     public javax.swing.JLabel Title;
     protected static javax.swing.JButton assign;
     protected static javax.swing.JLabel assigned;
@@ -697,6 +698,7 @@ public class MAEGradingTool extends javax.swing.JFrame
     private javax.swing.JLabel memberLimits;
     private javax.swing.JLabel minLimit;
     protected static javax.swing.JTextField minMembers;
+    public static javax.swing.JLabel percentileText;
     protected static javax.swing.JButton recall;
     private javax.swing.JPanel reviewScores;
     private static javax.swing.JScrollPane reviewScoresScroll;
@@ -721,10 +723,11 @@ public class MAEGradingTool extends javax.swing.JFrame
     private javax.swing.JPanel timeTracking;
     protected static javax.swing.JComboBox<String> timeWeekSelection;
     private javax.swing.JCheckBox toggleOverride;
-    // End of variable declaration
+    // End of variables declaration                   
     @SuppressWarnings("unchecked")
-    //===============================Setting Up The Form And Components================================\\
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
+
         Title = new javax.swing.JLabel();
         sorting = new javax.swing.JLabel();
         mainTab = new javax.swing.JTabbedPane();
@@ -755,6 +758,7 @@ public class MAEGradingTool extends javax.swing.JFrame
         canvasWeekDestSel = new javax.swing.JComboBox<String>();
         scanned = new javax.swing.JLabel();
         toggleOverride = new javax.swing.JCheckBox();
+        percentileText = new javax.swing.JLabel();
         matchingTool = new javax.swing.JPanel();
         matchingLab = new javax.swing.JLabel();
         matchingLoc = new javax.swing.JTextField();
@@ -963,6 +967,11 @@ public class MAEGradingTool extends javax.swing.JFrame
         });
         reviewScores.add(toggleOverride, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 180, 290, 30));
 
+        percentileText.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        percentileText.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        percentileText.setText("80th Percentile: ");
+        reviewScores.add(percentileText, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 220, 310, 70));
+
         reviewScoresScroll.setViewportView(reviewScores);
 
         mainTab.addTab("Review Scores", reviewScoresScroll);
@@ -1134,5 +1143,5 @@ public class MAEGradingTool extends javax.swing.JFrame
 
         setSize(new java.awt.Dimension(852, 633));
         setLocationRelativeTo(null);
-    }
+    }// </editor-fold>                        
 }
