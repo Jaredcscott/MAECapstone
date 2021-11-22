@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /*
  * @author jared
@@ -29,9 +30,20 @@ public class Utilities {
         }
         else {
             //Checking all of the words in the names against each other
+            if (name1[0].equals("Zack") && name2[0].equals("Zachary")) {
+                if (name1[1].equals("Bell") && name2[1].equals("Bell")) {
+                    return true;
+                }
+            }
+            if (name1.length == 3) {
+                if (name1[2].equals("Van") && name1[1].equals(name2[0])) {
+                    return true;
+                }
+            }
             if(!(name1[name1.length-1].equals(name2[name2.length-1])) && name2.length == 2){
                 return false;
             }
+            
             for (String seg : name2) {
                 if (seg.equals(name1[0])) {
                     simScore += 5;
@@ -41,6 +53,7 @@ public class Utilities {
                 return false;
             }
         }
+        
         for (int i = 1; i < name1.length ; i++ ) {
             for (int j = 0; j < name2.length; j++) {
                 if (name1[i].equals(name2[j])) {

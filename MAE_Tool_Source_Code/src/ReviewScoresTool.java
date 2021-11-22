@@ -51,6 +51,8 @@ public class ReviewScoresTool {
     static int totalPoss = 0; //Used to calculate the students overall rating
     static String reviewFile; //Review Data File Location
     static String canvasFileR;  //Canvas File Location
+    static int nameIndex;
+    static int projectIndex;
     static int contributionIndex;  
     static int professionalismIndex;
     static int contributionSelfIndex;
@@ -412,6 +414,12 @@ public class ReviewScoresTool {
                     if (cell.toString().toLowerCase().equals("contribution self average")) { 
                         contributionSelfIndex = col;
                     }
+                    if (cell.toString().toLowerCase().equals("survey target")) { 
+                        nameIndex = col;
+                    }
+                    if (cell.toString().toLowerCase().equals("project")) { 
+                        projectIndex = col;
+                    }
                     if (cellList[0].toLowerCase().equals("rate") && (cell.toString().endsWith("- Peer Average"))) { //**NOTE: THIS NEEDS THE QUESTION TO START WITH THE WORD RATE.**
                         numQues += 1;
                         quesArray.add(cell.toString());
@@ -424,14 +432,17 @@ public class ReviewScoresTool {
             while (rowIterator.hasNext()) {
                 ArrayList<Double> reviewScores = new ArrayList<Double>();
                 row = rowIterator.next(); //Grabs the row object
+                if ((row.getCell(projectIndex).toString().startsWith("ALL PROJECTS AVERAGE"))) {
+                    continue;
+                }
                 if ((row.getCell(responseRateIndex).toString().split("/")[0] + "").equals("0")) {
                     continue;
                 }
-                if ((row.getCell(0).toString().startsWith("ALL PROJECTS AVERAGE"))) {
+                Cell curCell = row.getCell(nameIndex);
+                String[] nameArray = curCell.toString().split(" ");
+                if (nameArray.length == 1) {
                     continue;
                 }
-                Cell curCell = row.getCell(2);
-                String[] nameArray = curCell.toString().split(" ");
                 //Scraping the data
                 for (int num : quesCols) {
                     curCell = row.getCell(num);
@@ -484,6 +495,12 @@ public class ReviewScoresTool {
                     profSelfDone = true;
                 }
                 boolean selfDone = conSelfDone && profSelfDone;
+                if (nameArray[1].equals("") || nameArray[1] == null || (nameArray.length == 3 && nameArray[1].length() < 1 && nameArray[2].length() > 1)) {
+                    String[] newArray = new String[2];
+                    newArray[0] = nameArray[0];
+                    newArray[1] = nameArray[2];
+                    nameArray = newArray;
+                }
                 studentsReview.add(new StudentReview(nameArray,contribution,professionalism,selfDone));
                 rowCount += 1;
             }
